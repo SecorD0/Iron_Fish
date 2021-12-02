@@ -15,8 +15,8 @@ while test $# -gt 0; do
 		echo -e "${C_LGn}Usage${RES}: script ${C_LGn}[OPTIONS]${RES}"
 		echo
 		echo -e "${C_LGn}Options${RES}:"
-		echo -e "  -h, --help    show the help page"
-		echo -e "  -u, --update  update the node"
+		echo -e "  -h, --help            show the help page"
+		echo -e "  -u, --update          update the node"
 		echo
 		echo -e "${C_LGn}Useful URLs${RES}:"
 		echo -e "https://github.com/SecorD0/Aleo/blob/main/multi_tool.sh — script URL"
@@ -63,7 +63,7 @@ install() {
 		docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.txt $HOME/iron_fish_${iron_fish_wallet_name}.txt
 	elif [ -f $HOME/iron_fish_${iron_fish_wallet_name}.txt ]; then
 		docker cp $HOME/iron_fish_${iron_fish_wallet_name}.txt iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.txt
-		ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.txt"
+		docker exec -it iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.txt"
 	fi
 	docker exec -it iron_fish_node ironfish accounts:use $iron_fish_wallet_name
 	printf_n "${C_LGn}Done!${RES}"
