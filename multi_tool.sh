@@ -41,11 +41,11 @@ install() {
 	sudo apt update
 	sudo apt upgrade -y
 	if [ ! -n "$iron_fish_moniker" ]; then
-		printf_n "\n${C_LGn}Enter a node moniker${RES}"
+		printf_n "${C_LGn}Enter a node moniker${RES}"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_moniker
 	fi
 	if [ ! -n "$iron_fish_wallet_name" ]; then
-		printf_n "\n${C_LGn}Enter a wallet name${RES}"
+		printf_n "${C_LGn}Enter a wallet name${RES}"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_wallet_name
 	fi
 	sudo apt install wget jq bc build-essential -y
@@ -57,13 +57,17 @@ install() {
 	docker exec -it iron_fish_node ironfish config:set nodeName $iron_fish_moniker
 	docker exec -it iron_fish_node ironfish config:set blockGraffiti $iron_fish_moniker
 	docker restart iron_fish_node
+	printf_n "${C_LGn}Waiting 20 seconds...${RES}"
+	sleep 20
 	if ! docker exec -it iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.txt ]; then
 		docker exec -it iron_fish_node ironfish accounts:create $iron_fish_wallet_name
 		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.txt"
 		docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.txt $HOME/iron_fish_${iron_fish_wallet_name}.txt
 	elif [ -f $HOME/iron_fish_${iron_fish_wallet_name}.txt ]; then
 		docker cp $HOME/iron_fish_${iron_fish_wallet_name}.txt iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.txt
-		docker exec -it iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.txt"
+		echo 1
+		docker exec -dit iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.txt"
+		echo 2
 	fi
 	docker exec -it iron_fish_node ironfish accounts:use $iron_fish_wallet_name
 	printf_n "${C_LGn}Done!${RES}"
