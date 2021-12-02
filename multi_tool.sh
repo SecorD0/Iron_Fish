@@ -15,8 +15,8 @@ while test $# -gt 0; do
 		echo -e "${C_LGn}Usage${RES}: script ${C_LGn}[OPTIONS]${RES}"
 		echo
 		echo -e "${C_LGn}Options${RES}:"
-		echo -e "  -h, --help            show the help page"
-		echo -e "  -u, --update          update the node"
+		echo -e "  -h, --help    show the help page"
+		echo -e "  -u, --update  update the node"
 		echo
 		echo -e "${C_LGn}Useful URLs${RES}:"
 		echo -e "https://github.com/SecorD0/Aleo/blob/main/multi_tool.sh — script URL"
