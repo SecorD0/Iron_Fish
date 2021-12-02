@@ -41,11 +41,11 @@ install() {
 	sudo apt update
 	sudo apt upgrade -y
 	if [ ! -n "$iron_fish_moniker" ]; then
-		printf_n "${C_LGn}Enter a node moniker${RES}"
+		printf_n "\n${C_LGn}Enter a node moniker${RES}"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_moniker
 	fi
 	if [ ! -n "$iron_fish_wallet_name" ]; then
-		printf_n "${C_LGn}Enter a wallet name${RES}"
+		printf_n "\n${C_LGn}Enter a wallet name${RES}"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_wallet_name
 	fi
 	sudo apt install wget jq bc build-essential -y
