@@ -65,9 +65,7 @@ install() {
 		docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.txt $HOME/iron_fish_${iron_fish_wallet_name}.txt
 	elif [ -f $HOME/iron_fish_${iron_fish_wallet_name}.txt ]; then
 		docker cp $HOME/iron_fish_${iron_fish_wallet_name}.txt iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.txt
-		echo 1
 		docker exec -dit iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.txt"
-		echo 2
 	fi
 	docker exec -it iron_fish_node ironfish accounts:use $iron_fish_wallet_name
 	printf_n "${C_LGn}Done!${RES}"
@@ -80,7 +78,6 @@ Remember to save this file: ${C_LR}$HOME/iron_fish_${iron_fish_wallet_name}.txt$
 
 To view info about the node: ${C_LGn}if_node_info${RES}
 Alias for node commands execution: ${C_LGn}ironfish${RES}
-
 To view the node log: ${C_LGn}ifn_log${RES}
 To restart the node: ${C_LGn}docker restart iron_fish_node${RES}
 "
