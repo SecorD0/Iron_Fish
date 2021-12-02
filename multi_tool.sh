@@ -83,15 +83,17 @@ To restart the node: ${C_LGn}docker restart iron_fish_node${RES}
 "
 }
 update() {
+	printf_n "${C_LGn}Checking for update...${RES}"
 	status=`docker pull ghcr.io/iron-fish/ironfish:latest`
 	if ! grep -q "Image is up to date for" <<< "$status"; then
-		if docker ps -a | grep iron_fish_node; then
+		printf_n "${C_LGn}Updating...${RES}"
+		if docker ps -a | grep -q iron_fish_node; then
 			docker stop iron_fish_node
 			docker rm iron_fish_node
 			docker run -dit --name iron_fish_node --restart always --network host --volume $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest
 			printf_n "${C_LGn}The node was successfully updated!${RES}"
 		fi
-		if docker ps -a | grep iron_fish_miner; then
+		if docker ps -a | grep -q iron_fish_miner; then
 			local threads=`docker inspect iron_fish_miner | jq -r ".[0].Config.Cmd[2]"`
 			docker stop iron_fish_miner
 			docker rm iron_fish_miner
