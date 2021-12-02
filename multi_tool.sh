@@ -40,23 +40,23 @@ printf_n(){ printf "$1\n" "${@:2}"; }
 install() {
 	sudo apt update
 	sudo apt upgrade -y
-	sudo apt install wget jq bc build-essential -y
-	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/installers/docker.sh)
-	docker run -dit --name iron_fish_node --restart always --network host --volume $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest
-	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_node_log -v "docker logs iron_fish_node -fn 100" -a
-	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_node_info -v ". <(wget -qO- https://raw.githubusercontent.com/SecorD0/Iron_Fish/main/node_info.sh) -l RU 2> /dev/null" -a
-	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ironfish -v "docker exec -it iron_fish_node ironfish" -a
 	if [ ! -n "$iron_fish_moniker" ]; then
-		printf_n "${C_LGn}Enter the node moniker${RES}"
+		printf_n "${C_LGn}Enter a node moniker${RES}"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_moniker
 	fi
-	docker exec -it iron_fish_node ironfish config:set nodeName $iron_fish_moniker
-	docker exec -it iron_fish_node ironfish config:set blockGraffiti $iron_fish_moniker
-	docker restart iron_fish_node
 	if [ ! -n "$iron_fish_wallet_name" ]; then
 		printf_n "${C_LGn}Enter a wallet name${RES}"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_wallet_name
 	fi
+	sudo apt install wget jq bc build-essential -y
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/installers/docker.sh)
+	docker run -dit --name iron_fish_node --restart always --network host --volume $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ifn_log -v "docker logs iron_fish_node -fn 100" -a
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n if_node_info -v ". <(wget -qO- https://raw.githubusercontent.com/SecorD0/Iron_Fish/main/node_info.sh) -l RU 2> /dev/null" -a
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ironfish -v "docker exec -it iron_fish_node ironfish" -a
+	docker exec -it iron_fish_node ironfish config:set nodeName $iron_fish_moniker
+	docker exec -it iron_fish_node ironfish config:set blockGraffiti $iron_fish_moniker
+	docker restart iron_fish_node
 	if ! docker exec -it iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.txt ]; then
 		docker exec -it iron_fish_node ironfish accounts:create $iron_fish_wallet_name
 		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.txt"
@@ -74,10 +74,10 @@ Remember to save this file: ${C_LR}$HOME/iron_fish_${iron_fish_wallet_name}.txt$
 
 \tv ${C_LGn}Useful commands${RES} v
 
-To view info about the node: ${C_LGn}iron_fish_node_info${RES}
+To view info about the node: ${C_LGn}if_node_info${RES}
 Alias for node commands execution: ${C_LGn}ironfish${RES}
 
-To view the node log: ${C_LGn}iron_fish_node_log${RES}
+To view the node log: ${C_LGn}ifn_log${RES}
 To restart the node: ${C_LGn}docker restart iron_fish_node${RES}
 "
 }
