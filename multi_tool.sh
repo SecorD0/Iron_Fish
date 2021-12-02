@@ -108,4 +108,5 @@ update() {
 # Actions
 sudo apt install wget jq -y &>/dev/null
 . <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/logo.sh)
+if [ -f $HOME/iron_fish_${iron_fish_wallet_name}.txt ]; then mv $HOME/iron_fish_${iron_fish_wallet_name}.txt $HOME/iron_fish_${iron_fish_wallet_name}.json; fi
 $function
