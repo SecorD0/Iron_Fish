@@ -59,20 +59,20 @@ install() {
 	docker restart iron_fish_node
 	printf_n "${C_LGn}Waiting 20 seconds...${RES}"
 	sleep 20
-	if ! docker exec -it iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.txt ]; then
+	if ! docker exec -it iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
 		docker exec -it iron_fish_node ironfish accounts:create $iron_fish_wallet_name
-		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.txt"
-		docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.txt $HOME/iron_fish_${iron_fish_wallet_name}.txt
-	elif [ -f $HOME/iron_fish_${iron_fish_wallet_name}.txt ]; then
-		docker cp $HOME/iron_fish_${iron_fish_wallet_name}.txt iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.txt
-		docker exec -dit iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.txt"
+		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.json"
+		docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json $HOME/iron_fish_${iron_fish_wallet_name}.json
+	elif [ -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
+		docker cp $HOME/iron_fish_${iron_fish_wallet_name}.json iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json
+		docker exec -dit iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.json"
 	fi
 	docker exec -it iron_fish_node ironfish accounts:use $iron_fish_wallet_name
 	printf_n "${C_LGn}Done!${RES}"
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/logo.sh)
 	printf_n "
 The node was ${C_LGn}started${RES}.
-Remember to save this file: ${C_LR}$HOME/iron_fish_${iron_fish_wallet_name}.txt${RES}
+Remember to save this file: ${C_LR}$HOME/iron_fish_${iron_fish_wallet_name}.json${RES}
 
 \tv ${C_LGn}Useful commands${RES} v
 
