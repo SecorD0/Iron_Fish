@@ -66,6 +66,7 @@ install() {
 	elif [ -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
 		docker cp $HOME/iron_fish_${iron_fish_wallet_name}.json iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json
 		docker exec -dit iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.json"
+		docker exec -dit iron_fish_node ironfish accounts:use $iron_fish_wallet_name
 	fi
 	docker exec -it iron_fish_node ironfish accounts:use $iron_fish_wallet_name
 	printf_n "${C_LGn}Done!${RES}"
