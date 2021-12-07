@@ -38,8 +38,6 @@ done
 # Functions
 printf_n(){ printf "$1\n" "${@:2}"; }
 install() {
-	sudo apt update
-	sudo apt upgrade -y
 	if [ ! -n "$iron_fish_moniker" ]; then
 		printf_n "${C_LGn}Enter a node moniker${RES}"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_moniker
@@ -48,6 +46,8 @@ install() {
 		printf_n "${C_LGn}Enter a wallet name${RES}"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_wallet_name
 	fi
+	sudo apt update
+	sudo apt upgrade -y
 	sudo apt install wget jq bc build-essential -y
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/installers/docker.sh)
 	docker run -dit --name iron_fish_node --restart always --network host --volume $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest
