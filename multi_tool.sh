@@ -56,6 +56,7 @@ install() {
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ironfish -v "docker exec -it iron_fish_node ironfish" -a
 	docker exec -it iron_fish_node ironfish config:set nodeName $iron_fish_moniker
 	docker exec -it iron_fish_node ironfish config:set blockGraffiti $iron_fish_moniker
+	docker exec -t iron_fish_node sh -c "sed -i 's%REQUEST_BLOCKS_PER_MESSAGE.*%REQUEST_BLOCKS_PER_MESSAGE = 5%' /usr/src/app/node_modules/ironfish/src/syncer.ts"
 	docker restart iron_fish_node
 	printf_n "${C_LGn}Waiting 20 seconds...${RES}"
 	sleep 20
