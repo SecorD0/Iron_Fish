@@ -59,7 +59,7 @@ main() {
 		local t_m1="Майнер запущен:         ${C_LGn}да${RES}"
 		local t_m2="Майнер запущен:         ${C_LR}нет${RES}"
 		local t_t="Потоков используется:   ${C_LGn}%d${RES}"
-		local t_bm="Блоков намайнено:       ${C_LGn}%d${RES}\n"
+		#local t_bm="Блоков намайнено:       ${C_LGn}%d${RES}\n"
 		
 		local t_wn="Название кошелька:      ${C_LGn}%s${RES}"
 		local t_wa="Адрес кошелька:         ${C_LGn}%s${RES}"
@@ -77,7 +77,7 @@ main() {
 		local t_m1="Miner launched:        ${C_LGn}yes${RES}"
 		local t_m2="Miner launched:        ${C_LR}no${RES}"
 		local t_t="Threads are used:      ${C_LGn}%d${RES}"
-		local t_bm="Blocks mined:          ${C_LGn}%d${RES}\n"
+		#local t_bm="Blocks mined:          ${C_LGn}%d${RES}\n"
 		
 		local t_wn="Wallet name:           ${C_LGn}%s${RES}"		
 		local t_wa="Wallet address:        ${C_LGn}%s${RES}"
@@ -107,7 +107,7 @@ main() {
 	else
 		local miner="false"
 	fi
-	local blocks_mined=`echo "$status" | awk 'NR == 7 {print $6}'`
+	#local blocks_mined=`echo "$status" | awk 'NR == 7 {print $6}'`
 	local wallet_name=`$command accounts:which | tr -d '\r'`
 	local wallet_address=`$command accounts:publickey | tr -d '\r' | awk '{print $(NF)}'`
 	local balance=`$command accounts:balance | tr -d '\r' | awk 'NR == 1 {print $(NF-2)}'`
@@ -141,7 +141,7 @@ main() {
 			printf_n "$t_m2"
 		fi
 		if [ -n "$threads" ]; then printf_n "$t_t" "$threads"; fi
-		printf_n "$t_bm" "$blocks_mined"
+		#printf_n "$t_bm" "$blocks_mined"
 		
 		printf_n "$t_wn" "$wallet_name"
 		printf_n "$t_wa" "$wallet_address"
