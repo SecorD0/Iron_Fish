@@ -58,7 +58,7 @@ main() {
 		
 		local t_m1="Майнер запущен:         ${C_LGn}да${RES}"
 		local t_m2="Майнер запущен:         ${C_LR}нет${RES}"
-		local t_t="Потоков используется:   ${C_LGn}%d${RES}"
+		local t_t="Потоков используется:   ${C_LGn}%d${RES}\n"
 		#local t_bm="Блоков намайнено:       ${C_LGn}%d${RES}\n"
 		
 		local t_wn="Название кошелька:      ${C_LGn}%s${RES}"
@@ -76,7 +76,7 @@ main() {
 		
 		local t_m1="Miner launched:        ${C_LGn}yes${RES}"
 		local t_m2="Miner launched:        ${C_LR}no${RES}"
-		local t_t="Threads are used:      ${C_LGn}%d${RES}"
+		local t_t="Threads are used:      ${C_LGn}%d${RES}\n"
 		#local t_bm="Blocks mined:          ${C_LGn}%d${RES}\n"
 		
 		local t_wn="Wallet name:           ${C_LGn}%s${RES}"		
@@ -95,14 +95,14 @@ main() {
 	
 	local moniker=`$command config:get nodeName --no-color | tr -d '"' | tr -d '\r'`
 	local status=`$command status | tr -d '\r'`
-	local node_version=`echo "$status" | awk 'NR == 2 {print $2}'`
-	local latest_block_height=`echo "$status" | awk 'NR == 10 {print $(NF)}' | tr -d '(' | tr -d ')'`
-	if [ `echo "$status" | awk 'NR == 10 {print $2}'` = "SYNCED" ]; then
+	local node_version=`echo "$status" | grep Version | awk '{print $2}'`
+	local latest_block_height=`echo "$status" | grep Blockchain | awk '{print $(NF)}' | tr -d '(' | tr -d ')'`
+	if [ `echo "$status" | grep Blockchain | awk '{print $2}'` = "SYNCED" ]; then
 		local catching_up="false"
 	else
 		local catching_up="true"
 	fi
-	if [ `echo "$status" | awk 'NR == 7 {print $4}'` -ge 1 ]; then
+	if [ `echo "$status" | grep Mining | awk '{print $4}'` -ge 1 ]; then
 		local miner="true"
 	else
 		local miner="false"
