@@ -15,8 +15,9 @@ while test $# -gt 0; do
 		echo -e "${C_LGn}Usage${RES}: script ${C_LGn}[OPTIONS]${RES}"
 		echo
 		echo -e "${C_LGn}Options${RES}:"
-		echo -e "  -h, --help            show the help page"
-		echo -e "  -u, --update          update the node"
+		echo -e "  -h,  --help       show the help page"
+		echo -e "  -up, --update     update the node"
+		echo -e "  -un, --uninstall  unistall the node"
 		echo
 		echo -e "${C_LGn}Useful URLs${RES}:"
 		echo -e "https://github.com/SecorD0/Aleo/blob/main/multi_tool.sh — script URL"
@@ -25,8 +26,12 @@ while test $# -gt 0; do
 		echo
 		return 0 2>/dev/null; exit 0
 		;;
-	-u|--update)
+	-u|-up|--update)
 		function="update"
+		shift
+		;;
+	-un|--uninstall)
+		function="uninstall"
 		shift
 		;;
 	*|--)
@@ -56,7 +61,6 @@ install() {
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ironfish -v "docker exec -it iron_fish_node ironfish" -a
 	docker exec -it iron_fish_node ironfish config:set nodeName $iron_fish_moniker
 	docker exec -it iron_fish_node ironfish config:set blockGraffiti $iron_fish_moniker
-	docker exec -t iron_fish_node sh -c "sed -i 's%REQUEST_BLOCKS_PER_MESSAGE.*%REQUEST_BLOCKS_PER_MESSAGE = 5%' /usr/src/app/node_modules/ironfish/src/syncer.ts"
 	docker restart iron_fish_node
 	printf_n "${C_LGn}Waiting 20 seconds...${RES}"
 	sleep 20
@@ -105,6 +109,23 @@ update() {
 	else
 		printf_n "${C_LGn}Node version is current!${RES}"
 	fi
+}
+uninstall() {
+	printf_n "${C_LGn}Node uninstalling...${RES}"
+	if docker exec iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
+		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.json"
+		docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json $HOME/iron_fish_${iron_fish_wallet_name}.json
+	fi
+	docker rm `docker ps -a | grep iron_fish | awk '{print $1}'` -f
+	docker rmi ghcr.io/iron-fish/ironfish:latest
+	rm -rf $HOME/.ironfish
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_moniker -da
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_wallet_name -da
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ifn_log -da
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n if_node_info -da
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ironfish -da
+	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ifm_log -da
+	printf_n "${C_LGn}Done!${RES}"
 }
 
 # Actions
