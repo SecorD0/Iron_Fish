@@ -26,7 +26,7 @@ while test $# -gt 0; do
 		echo
 		return 0 2>/dev/null; exit 0
 		;;
-	-u|-up|--update)
+	-up|--update)
 		function="update"
 		shift
 		;;
@@ -44,11 +44,11 @@ done
 printf_n(){ printf "$1\n" "${@:2}"; }
 install() {
 	if [ ! -n "$iron_fish_moniker" ]; then
-		printf_n "${C_LGn}Enter a node moniker${RES}"
+		printf_n "Enter a node moniker"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_moniker
 	fi
 	if [ ! -n "$iron_fish_wallet_name" ]; then
-		printf_n "${C_LGn}Enter a wallet name${RES}"
+		printf_n "\nEnter a wallet name"
 		. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n iron_fish_wallet_name
 	fi
 	sudo apt update
@@ -59,6 +59,7 @@ install() {
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ifn_log -v "docker logs iron_fish_node -fn 100" -a
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n if_node_info -v ". <(wget -qO- https://raw.githubusercontent.com/SecorD0/Iron_Fish/main/node_info.sh) -l RU 2> /dev/null" -a
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ironfish -v "docker exec -it iron_fish_node ironfish" -a
+	docker exec -it iron_fish_node ironfish config:set enableTelemetry true
 	docker exec -it iron_fish_node ironfish config:set nodeName $iron_fish_moniker
 	docker exec -it iron_fish_node ironfish config:set blockGraffiti $iron_fish_moniker
 	docker restart iron_fish_node
@@ -66,12 +67,12 @@ install() {
 	sleep 20
 	if ! docker exec -it iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
 		docker exec -it iron_fish_node ironfish accounts:create $iron_fish_wallet_name
-		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.json"
-		docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json $HOME/iron_fish_${iron_fish_wallet_name}.json
+		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name --no-color > $HOME/iron_fish_${iron_fish_wallet_name}.json
+		printf_n "${C_LGn}A new wallet was generated${RES}"
 	elif [ -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
 		docker cp $HOME/iron_fish_${iron_fish_wallet_name}.json iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json
 		docker exec -dit iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.json"
-		docker exec -dit iron_fish_node ironfish accounts:use $iron_fish_wallet_name
+		printf_n "${C_LGn}The existing wallet was imported${RES}"
 	fi
 	docker exec -it iron_fish_node ironfish accounts:use $iron_fish_wallet_name
 	printf_n "${C_LGn}Done!${RES}"
@@ -112,9 +113,16 @@ update() {
 }
 uninstall() {
 	printf_n "${C_LGn}Node uninstalling...${RES}"
-	if docker exec iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
-		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.json"
-		docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json $HOME/iron_fish_${iron_fish_wallet_name}.json
+	if  [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
+		local response=`docker exec iron_fish_node ironfish accounts:list 2>&1`
+		if grep -q "No such container" <<< "$response"; then
+			docker run -dit --name iron_fish_node --restart always --network host -v $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest
+			sleep 20
+		fi
+		if docker exec iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name; then
+			docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.json"
+			docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json $HOME/iron_fish_${iron_fish_wallet_name}.json
+		fi
 	fi
 	docker rm `docker ps -a | grep iron_fish | awk '{print $1}'` -f
 	docker rmi ghcr.io/iron-fish/ironfish:latest
