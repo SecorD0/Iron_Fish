@@ -137,18 +137,17 @@ main() {
 	
 	local wallet_name=`$command accounts:which | tr -d '\r'`
 	local wallet_address=`$command accounts:publickey | tr -d '\r' | awk '{print $(NF)}'`
-	local balance=`$command accounts:balance | tr -d '\r' | grep "The balance is" | awk '{print $(NF-2)}'`
+	local balance=`$command accounts:balance | tr -d '\r' | grep available | awk '{print $(NF-2)}'`
 	
 	# Output
 	if [ "$raw_output" = "true" ]; then
-		printf_n '{"moniker": "%s", "node_version": "%s", "latest_block_height": %d, "catching_up": %b, "miner": %b, "threads": %d, "blocks_mined": %d, "wallet_name": "%s", "wallet_address": "%s", "balance": %f}' \
+		printf_n '{"moniker": "%s", "node_version": "%s", "latest_block_height": %d, "catching_up": %b, "miner": "%s", "threads": %d, "wallet_name": "%s", "wallet_address": "%s", "balance": %f}' \
 "$moniker" \
 "$node_version" \
 "$latest_block_height" \
 "$catching_up" \
 "$miner" \
 "$threads" \
-"$blocks_mined" \
 "$wallet_name" \
 "$wallet_address" \
 "$balance" 2>/dev/null
