@@ -101,11 +101,9 @@ update() {
 			printf_n "${C_LGn}The node was successfully updated!${RES}"
 		fi
 		if docker ps -a | grep -q iron_fish_miner; then
-			local threads=`docker inspect iron_fish_miner | jq -r ".[0].Config.Cmd[-1]"`
 			docker stop iron_fish_miner
 			docker rm iron_fish_miner
-			docker run -dit --name iron_fish_miner --restart always --network host -v $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest miners:start -t $threads
-			printf_n "${C_LGn}The miner was successfully updated!${RES}"
+			printf_n "${C_LR}Don't forget to relaunch the miner!${RES}"
 		fi
 	else
 		printf_n "${C_LGn}Node version is current!${RES}"
