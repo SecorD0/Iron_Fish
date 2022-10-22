@@ -55,6 +55,8 @@ install() {
 	sudo apt upgrade -y
 	sudo apt install wget jq bc build-essential -y
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/installers/docker.sh)
+	echo y | docker run -i --rm --network host -v $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest chain:download
+	sleep 10
 	docker run -dit --name iron_fish_node --restart always --network host -v $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n ifn_log -v "docker logs iron_fish_node -fn 100" -a
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/miscellaneous/insert_variable.sh) -n if_node_info -v ". <(wget -qO- https://raw.githubusercontent.com/SecorD0/Iron_Fish/main/node_info.sh) -l RU 2> /dev/null" -a
