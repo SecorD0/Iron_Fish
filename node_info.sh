@@ -137,7 +137,7 @@ main() {
 	
 	local wallet_name=`$command wallet:which | tr -d '\r'`
 	local wallet_address=`$command wallet:address | tr -d '\r' | awk '{print $(NF)}'`
-	local balance=`$command wallet:balance | tr -d '\r' | grep available | awk '{print $(NF-2)}'`
+	local balance=`$command wallet:balance | grep Balance | awk '{print $(NF)}'`
 	
 	# Output
 	if [ "$raw_output" = "true" ]; then
