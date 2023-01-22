@@ -129,7 +129,7 @@ main() {
 	local status=`$command status | tr -d '\r'`
 	local node_version=`echo "$status" | grep Version | awk '{print $2}'`
 	local latest_block_height=`echo "$status" | grep Blockchain | awk '{print $(3)}' | tr -d '(' | tr -d ')'`
-	if [ `echo "$status" | grep Blockchain | awk '{print $(NF)}' | tr -d '(' | tr -d ')'` = "SYNCED" ]; then
+	if [ `echo "$status" | grep Blockchain | awk '{print $(NF)}'` = "(SYNCED)" ]; then
 		local catching_up="false"
 	else
 		local catching_up="true"
