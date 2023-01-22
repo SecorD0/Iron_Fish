@@ -128,16 +128,16 @@ main() {
 	local moniker=`$command config:get nodeName --no-color | tr -d '"' | tr -d '\r'`
 	local status=`$command status | tr -d '\r'`
 	local node_version=`echo "$status" | grep Version | awk '{print $2}'`
-	local latest_block_height=`echo "$status" | grep Blockchain | awk '{print $(NF)}' | tr -d '(' | tr -d ')'`
-	if [ `echo "$status" | grep Blockchain | awk '{print $2}'` = "SYNCED" ]; then
+	local latest_block_height=`echo "$status" | grep Blockchain | awk '{print $(3)}' | tr -d '(' | tr -d ')'`
+	if [ `echo "$status" | grep Blockchain | awk '{print $(NF)}'` = "(SYNCED)" ]; then
 		local catching_up="false"
 	else
 		local catching_up="true"
 	fi
 	
-	local wallet_name=`$command accounts:which | tr -d '\r'`
-	local wallet_address=`$command accounts:publickey | tr -d '\r' | awk '{print $(NF)}'`
-	local balance=`$command accounts:balance | tr -d '\r' | grep available | awk '{print $(NF-2)}'`
+	local wallet_name=`$command wallet:which | tr -d '\r'`
+	local wallet_address=`$command wallet:address | tr -d '\r' | awk '{print $(NF)}'`
+	local balance=`$command wallet:balance | grep Balance | awk '{print $(NF)}'`
 	
 	# Output
 	if [ "$raw_output" = "true" ]; then
