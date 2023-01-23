@@ -67,16 +67,16 @@ install() {
 	docker restart iron_fish_node
 	printf_n "${C_LGn}Waiting 20 seconds...${RES}"
 	sleep 20
-	if ! docker exec -it iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
-		docker exec -it iron_fish_node ironfish accounts:create $iron_fish_wallet_name
-		docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name --no-color > $HOME/iron_fish_${iron_fish_wallet_name}.json
+	if ! docker exec -it iron_fish_node ironfish wallet:list | grep -q $iron_fish_wallet_name && [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
+		docker exec -it iron_fish_node ironfish wallet:create $iron_fish_wallet_name
+		docker exec -it iron_fish_node ironfish wallet:export $iron_fish_wallet_name --no-color > $HOME/iron_fish_${iron_fish_wallet_name}.json
 		printf_n "${C_LGn}A new wallet was generated${RES}"
 	elif [ -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
 		docker cp $HOME/iron_fish_${iron_fish_wallet_name}.json iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json
-		docker exec -dit iron_fish_node ironfish accounts:import "iron_fish_${iron_fish_wallet_name}.json"
+		docker exec -dit iron_fish_node ironfish wallet:import "iron_fish_${iron_fish_wallet_name}.json"
 		printf_n "${C_LGn}The existing wallet was imported${RES}"
 	fi
-	docker exec -it iron_fish_node ironfish accounts:use $iron_fish_wallet_name
+	docker exec -it iron_fish_node ironfish wallet:use $iron_fish_wallet_name
 	printf_n "${C_LGn}Done!${RES}"
 	. <(wget -qO- https://raw.githubusercontent.com/SecorD0/utils/main/logo.sh)
 	printf_n "
@@ -114,13 +114,13 @@ update() {
 uninstall() {
 	printf_n "${C_LGn}Node uninstalling...${RES}"
 	if  [ ! -f $HOME/iron_fish_${iron_fish_wallet_name}.json ]; then
-		local response=`docker exec iron_fish_node ironfish accounts:list 2>&1`
+		local response=`docker exec iron_fish_node ironfish wallet:list 2>&1`
 		if grep -q "No such container" <<< "$response"; then
 			docker run -dit --name iron_fish_node --restart always --network host -v $HOME/.ironfish:/root/.ironfish ghcr.io/iron-fish/ironfish:latest
 			sleep 20
 		fi
-		if docker exec iron_fish_node ironfish accounts:list | grep -q $iron_fish_wallet_name; then
-			docker exec -it iron_fish_node ironfish accounts:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.json"
+		if docker exec iron_fish_node ironfish wallet:list | grep -q $iron_fish_wallet_name; then
+			docker exec -it iron_fish_node ironfish wallet:export $iron_fish_wallet_name "iron_fish_${iron_fish_wallet_name}.json"
 			docker cp iron_fish_node:/usr/src/app/iron_fish_${iron_fish_wallet_name}.json $HOME/iron_fish_${iron_fish_wallet_name}.json
 		fi
 	fi
